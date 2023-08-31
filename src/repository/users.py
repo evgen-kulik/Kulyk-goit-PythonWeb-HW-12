@@ -74,7 +74,7 @@ async def get_user_by_email(email: str, db: Session) -> User | None:
 async def create_user(body: UserModel, db: Session) -> User:
     contacts = db.query(Contact).filter(Contact.id.in_(body.contacts)).all()
     new_user = User(name=body.name, last_name=body.last_name, day_of_born=body.day_of_born, email=body.email,
-                    description=body.description, contacts=contacts)
+                    description=body.description, password=body.password, contacts=contacts)
     db.add(new_user)
     db.commit()
     db.refresh(new_user)

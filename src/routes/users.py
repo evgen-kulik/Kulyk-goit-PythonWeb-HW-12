@@ -25,9 +25,9 @@ async def get_user(user_id: int, db: Session = Depends(get_db)):
     return user
 
 
-@router.post("/", response_model=UserResponse)
-async def create_user(body: UserModel, db: Session = Depends(get_db)):
-    return await repository_users.create_user(body, db)
+# @router.post("/", response_model=UserResponse)
+# async def create_user(body: UserModel, db: Session = Depends(get_db)):
+#     return await repository_users.create_user(body, db)
 
 
 @router.put("/{user_id}", response_model=UserResponse)

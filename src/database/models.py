@@ -22,7 +22,7 @@ class User(Base):
     last_name = Column(String(50), nullable=False, index=True)
     day_of_born = Column(Date, nullable=False, index=True)
     email = Column(String, nullable=False, unique=True, index=True)
-    password = Column(String(6), nullable=False)
+    password = Column(String(12), nullable=False)
     description = Column(String(300), nullable=True)
     created_at = Column("created_at", DateTime, default=func.now())  # автоматично створюватиметься
     updated_at = Column("updated_at", DateTime, default=func.now(), onupdate=func.now())  # автоматично створюватиметься
