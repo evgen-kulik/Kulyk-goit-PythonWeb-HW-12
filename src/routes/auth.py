@@ -13,7 +13,7 @@ security = HTTPBearer()
 
 @router.post("/signup", response_model=UserResponse, status_code=status.HTTP_201_CREATED)
 async def signup(body: UserModel, db: Session = Depends(get_db)):
-    exist_user = await repository_users.get_user_by_email(body.email, db)
+    exist_user = await repository_users.find_user_by_email(body.email, db)
     if exist_user:
         raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Account already exists")
     body.password = auth_service.get_password_hash(body.password)
@@ -23,7 +23,7 @@ async def signup(body: UserModel, db: Session = Depends(get_db)):
 
 @router.post("/login", response_model=TokenModel)
 async def login(body: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
-    user = await repository_users.get_user_by_email(body.username, db)  # username = user.email (так вимагає стандарт)
+    user = await repository_users.find_user_by_email(body.username, db)  # username = user.email (так вимагає стандарт)
     if user is None:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid email")
     if not auth_service.verify_password(body.password, user.password):
@@ -39,7 +39,7 @@ async def login(body: OAuth2PasswordRequestForm = Depends(), db: Session = Depen
 async def refresh_token(credentials: HTTPAuthorizationCredentials = Security(security), db: Session = Depends(get_db)):
     token = credentials.credentials
     email = await auth_service.decode_refresh_token(token)
-    user = await repository_users.get_user_by_email(email, db)
+    user = await repository_users.find_user_by_email(email, db)
     if user.refresh_token != token:
         await repository_users.update_token(user, None, db)
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid refresh token")

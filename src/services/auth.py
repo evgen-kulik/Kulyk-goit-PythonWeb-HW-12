@@ -53,8 +53,8 @@ class Auth:
         try:
             # Decode JWT
             payload = jwt.decode(token, self.SECRET_KEY, algorithms=[self.ALGORITHM])
-            if payload.get("scope") == "acces_token":
-                email = payload.get["sub"]
+            if payload.get("scope") == "access_token":
+                email = payload.get("sub")
                 if email is None:
                     raise credentials_exception
             else:
@@ -62,7 +62,7 @@ class Auth:
         except JWTError as e:
             raise credentials_exception
 
-        user = await repository_users.get_user_by_email(email, db)
+        user = await repository_users.find_user_by_email(email, db)
         if user is None:
             raise credentials_exception
         return user

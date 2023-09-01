@@ -1,14 +1,15 @@
 from typing import Type
 from datetime import date, timedelta
 
-
+from fastapi import Depends
 from sqlalchemy.orm import Session
 
 from src.database.models import User, Contact
 from src.schemas import UserModel
 
 
-async def get_users(skip: int, limit: int, db: Session) -> list[Type[User]]:
+async def get_users(skip: int, limit: int, db: Session) -> \
+list[Type[User]]:
     return db.query(User).offset(skip).limit(limit).all()
 
 
@@ -16,7 +17,8 @@ async def get_user(user_id: int, db: Session) -> Type[User] | None:
     return db.query(User).filter(User.id == user_id).first()
 
 
-# async def create_user(body: UserModel, db: Session) -> User:
+# Тепер контакт додається тільки під час SignUp
+# async def create_user_by_user(body: UserModel, db: Session) -> User:
 #     contacts = db.query(Contact).filter(Contact.id.in_(body.contacts)).all()
 #     user = User(name=body.name, last_name=body.last_name, day_of_born=body.day_of_born, email=body.email,
 #                 description=body.description, contacts=contacts)
@@ -24,6 +26,7 @@ async def get_user(user_id: int, db: Session) -> Type[User] | None:
 #     db.commit()
 #     db.refresh(user)
 #     return user
+# ---------------
 
 
 async def remove_user(user_id: int, db: Session) -> User | None:
@@ -67,10 +70,6 @@ async def find_next_7_days_birthdays(db: Session) -> list[Type[User]] | None:
 
 
 # -------------------Авторизаційні функції-----------------
-async def get_user_by_email(email: str, db: Session) -> User | None:
-    return db.query(User).filter(User.email == email).first()
-
-
 async def create_user(body: UserModel, db: Session) -> User:
     contacts = db.query(Contact).filter(Contact.id.in_(body.contacts)).all()
     new_user = User(name=body.name, last_name=body.last_name, day_of_born=body.day_of_born, email=body.email,
@@ -84,6 +83,3 @@ async def create_user(body: UserModel, db: Session) -> User:
 async def update_token(user: User, refresh_token, db: Session):
     user.refresh_token = refresh_token
     db.commit()
-
-
-
