@@ -38,7 +38,7 @@ async def get_user(user_id: int, db: Session = Depends(get_db),
 @router.put("/{user_id}", response_model=UserResponse)
 async def update_user(body: UserModel, user_id: int, db: Session = Depends(get_db),
                       current_user: User = Depends(auth_service.get_current_user)):
-    user = await repository_users.update_user(user_id, body, db)
+    user = await repository_users.update_user(user_id, body, db, current_user)
     if user is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
     return user
@@ -47,7 +47,7 @@ async def update_user(body: UserModel, user_id: int, db: Session = Depends(get_d
 @router.delete("/{user_id}", response_model=UserResponse)
 async def remove_user(user_id: int, db: Session = Depends(get_db),
                       current_user: User = Depends(auth_service.get_current_user)):
-    user = await repository_users.remove_user(user_id, db)
+    user = await repository_users.remove_user(user_id, db, current_user)
     if user is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
     return user

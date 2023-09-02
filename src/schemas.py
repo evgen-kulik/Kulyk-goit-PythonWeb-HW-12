@@ -19,7 +19,7 @@ class UserBase(BaseModel):
     last_name: str = Field(max_length=50)
     day_of_born: date
     email: EmailStr
-    description: str = Field(max_length=300)
+    description: str = Field(max_length=250)
     password: str = Field(min_length=6, max_length=250)
 
 

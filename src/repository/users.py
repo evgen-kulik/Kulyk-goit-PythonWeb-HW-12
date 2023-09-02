@@ -2,6 +2,7 @@ from typing import Type
 from datetime import date, timedelta
 
 from fastapi import Depends
+from sqlalchemy import and_
 from sqlalchemy.orm import Session
 
 from src.database.models import User, Contact
@@ -29,16 +30,19 @@ async def get_user(user_id: int, db: Session) -> Type[User] | None:
 # ---------------
 
 
-async def remove_user(user_id: int, db: Session) -> User | None:
-    user = db.query(User).filter(User.id == user_id).first()
+async def remove_user(user_id: int, db: Session, user: User) -> User | None:
+    # user = db.query(User).filter(User.id == user_id).first()
+    user = db.query(User).filter(and_(User.id == user_id, User.id == user.id)).first()
     if user:
         db.delete(user)
         db.commit()
     return user
 
 
-async def update_user(user_id: int, body: UserModel, db: Session) -> User | None:
-    user = db.query(User).filter(User.id == user_id).first()
+async def update_user(user_id: int, body: UserModel, db: Session, user: User) -> User | None:
+    user = db.query(User).filter(and_(User.id == user_id, User.id == user.id)).first()
+    # User.id == user_id - підтягує юзера, з id, який задано
+    # User.id == user.id - підтягує тільки юзера з id, який задано
     if user:
         phones = db.query(Contact).filter(Contact.id.in_(body.contacts)).all()
         user.name = body.name

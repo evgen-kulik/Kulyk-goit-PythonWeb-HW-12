@@ -1,8 +1,8 @@
 from typing import Type
 
 from sqlalchemy.orm import Session
-
-from src.database.models import Contact
+from sqlalchemy import and_
+from src.database.models import Contact, User
 from src.schemas import ContactModel
 
 
@@ -22,16 +22,16 @@ async def create_contact(body: ContactModel, db: Session) -> Contact:
     return contact
 
 
-async def update_contact(contact_id: int, body: ContactModel, db: Session) -> Contact | None:
-    contact = db.query(Contact).filter(Contact.id == contact_id).first()
+async def update_contact(contact_id: int, body: ContactModel, db: Session, user: User) -> Contact | None:
+    contact = db.query(Contact).filter(and_(Contact.id == contact_id, Contact.user_id == user.id)).first()
     if contact:
         contact.phone_number = body.phone_number
         db.commit()
     return contact
 
 
-async def remove_contact(contact_id: int, db: Session) -> Contact | None:
-    contact = db.query(Contact).filter(Contact.id == contact_id).first()
+async def remove_contact(contact_id: int, db: Session, user: User) -> Contact | None:
+    contact = db.query(Contact).filter(and_(Contact.id == contact_id, Contact.user_id == user.id)).first()
     if contact:
         db.delete(contact)
         db.commit()
