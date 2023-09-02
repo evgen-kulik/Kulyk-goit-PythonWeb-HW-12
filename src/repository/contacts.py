@@ -22,8 +22,14 @@ async def create_contact(body: ContactModel, db: Session) -> Contact:
     return contact
 
 
-async def update_contact(contact_id: int, body: ContactModel, db: Session, user: User) -> Contact | None:
-    contact = db.query(Contact).filter(and_(Contact.id == contact_id, Contact.user_id == user.id)).first()
+async def update_contact(
+    contact_id: int, body: ContactModel, db: Session, user: User
+) -> Contact | None:
+    contact = (
+        db.query(Contact)
+        .filter(and_(Contact.id == contact_id, Contact.user_id == user.id))
+        .first()
+    )
     if contact:
         contact.phone_number = body.phone_number
         db.commit()
@@ -31,7 +37,11 @@ async def update_contact(contact_id: int, body: ContactModel, db: Session, user:
 
 
 async def remove_contact(contact_id: int, db: Session, user: User) -> Contact | None:
-    contact = db.query(Contact).filter(and_(Contact.id == contact_id, Contact.user_id == user.id)).first()
+    contact = (
+        db.query(Contact)
+        .filter(and_(Contact.id == contact_id, Contact.user_id == user.id))
+        .first()
+    )
     if contact:
         db.delete(contact)
         db.commit()

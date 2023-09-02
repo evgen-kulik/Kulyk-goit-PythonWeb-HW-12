@@ -4,7 +4,9 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy.exc import SQLAlchemyError
 
 
-SQLALCHEMY_DATABASE_URL = "postgresql+psycopg2://postgres:567234@localhost:5432/hw_12_postgres"
+SQLALCHEMY_DATABASE_URL = (
+    "postgresql+psycopg2://postgres:567234@localhost:5432/hw_12_postgres"
+)
 engine = create_engine(SQLALCHEMY_DATABASE_URL)
 
 # engine = create_engine(SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False})

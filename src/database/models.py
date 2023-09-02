@@ -1,6 +1,7 @@
 from sqlalchemy import Column, Integer, String, func, Table, DateTime, Date
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql.schema import ForeignKey
+
 # from sqlalchemy.sql.sqltypes import DateTime  #---?
 from sqlalchemy.ext.declarative import declarative_base
 
@@ -17,23 +18,32 @@ user_m2m_contact = Table(
 
 class User(Base):
     __tablename__ = "users_info"
-    id = Column(Integer, primary_key=True, index=True)  # "index=True" - для полів, за якими можливе фільтрування
+    id = Column(
+        Integer, primary_key=True, index=True
+    )  # "index=True" - для полів, за якими можливе фільтрування
     name = Column(String(50), nullable=False, index=True)
     last_name = Column(String(50), nullable=False, index=True)
     day_of_born = Column(Date, nullable=False, index=True)
     email = Column(String, nullable=False, unique=True, index=True)
     password = Column(String, nullable=False)
     description = Column(String(250), nullable=True)
-    created_at = Column("created_at", DateTime, default=func.now())  # автоматично створюватиметься
-    updated_at = Column("updated_at", DateTime, default=func.now(), onupdate=func.now())  # автоматично створюватиметься
+    created_at = Column(
+        "created_at", DateTime, default=func.now()
+    )  # автоматично створюватиметься
+    updated_at = Column(
+        "updated_at", DateTime, default=func.now(), onupdate=func.now()
+    )  # автоматично створюватиметься
 
 
 class Contact(Base):
     __tablename__ = "contacts"
     id = Column(Integer, primary_key=True, index=True)
     phone_number = Column(String(20), nullable=False, index=True)
-    created_at = Column("created_at", DateTime, default=func.now())  # автоматично створюватиметься
-    updated_at = Column("updated_at", DateTime, default=func.now(), onupdate=func.now())  # автоматично створюватиметься
-    user_id = Column('user_id', ForeignKey('users_info.id', ondelete='CASCADE'))
+    created_at = Column(
+        "created_at", DateTime, default=func.now()
+    )  # автоматично створюватиметься
+    updated_at = Column(
+        "updated_at", DateTime, default=func.now(), onupdate=func.now()
+    )  # автоматично створюватиметься
+    user_id = Column("user_id", ForeignKey("users_info.id", ondelete="CASCADE"))
     user = relationship("User", backref="contacts")
-
