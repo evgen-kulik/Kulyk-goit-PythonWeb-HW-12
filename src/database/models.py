@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, func, Table, DateTime, Date
+from sqlalchemy import Column, Integer, String, func, Table, DateTime, Date, Boolean
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql.schema import ForeignKey
 
@@ -25,7 +25,7 @@ class User(Base):
     last_name = Column(String(50), nullable=False, index=True)
     day_of_born = Column(Date, nullable=False, index=True)
     email = Column(String, nullable=False, unique=True, index=True)
-    password = Column(String, nullable=False)
+    password = Column(String(350), nullable=False)
     description = Column(String(250), nullable=True)
     created_at = Column(
         "created_at", DateTime, default=func.now()
@@ -33,6 +33,7 @@ class User(Base):
     updated_at = Column(
         "updated_at", DateTime, default=func.now(), onupdate=func.now()
     )  # автоматично створюватиметься
+    confirmed = Column(Boolean, default=False)  # визначає, чи був підтверджений email користувача
 
 
 class Contact(Base):

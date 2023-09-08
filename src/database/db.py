@@ -5,7 +5,7 @@ from sqlalchemy.exc import SQLAlchemyError
 
 
 SQLALCHEMY_DATABASE_URL = (
-    "postgresql+psycopg2://postgres:567234@localhost:5432/hw_12_postgres"
+    "postgresql+psycopg2://postgres:567234@localhost:5432/hw_13_postgres"
 )
 engine = create_engine(SQLALCHEMY_DATABASE_URL)
 

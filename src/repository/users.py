@@ -106,3 +106,12 @@ async def create_user(body: UserModel, db: Session) -> User:
 async def update_token(user: User, refresh_token, db: Session):
     user.refresh_token = refresh_token
     db.commit()
+
+
+# ---------Верифікація-----------
+async def confirmed_email(email: str, db: Session) -> None:
+    """Мета цієї функції – встановити атрибут confirmed користувача в значення True у базі даних."""
+    user = await find_user_by_email(email, db)
+    user.confirmed = True
+    db.commit()
+
