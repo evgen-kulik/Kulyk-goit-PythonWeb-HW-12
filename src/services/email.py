@@ -1,4 +1,5 @@
 from pathlib import Path
+import logging
 
 from fastapi_mail import FastMail, MessageSchema, ConnectionConfig, MessageType
 from fastapi_mail.errors import ConnectionErrors
@@ -9,9 +10,9 @@ from src.services.auth import auth_service
 
 # для навчання тут прописано навчальну пошту
 conf = ConnectionConfig(
-    MAIL_USERNAME="fatsapiuser@meta.ua",
+    MAIL_USERNAME="fastapi_kulyk@meta.ua",
     MAIL_PASSWORD="pythonCourse2023",
-    MAIL_FROM="fatsapiuser@meta.ua",  #--------??????????????
+    MAIL_FROM="fastapi_kulyk@meta.ua",  # --------??????????????
     MAIL_PORT=465,
     MAIL_SERVER="smtp.meta.ua",
     MAIL_FROM_NAME="Home_work_12/13_app",
@@ -36,4 +37,4 @@ async def send_email(email: EmailStr, username: str, host: str):
         fm = FastMail(conf)
         await fm.send_message(message, template_name="email_template.html")
     except ConnectionErrors as err:
-        print(err)
+        logging.error(err)

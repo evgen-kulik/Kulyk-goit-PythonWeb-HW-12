@@ -1,6 +1,8 @@
 from datetime import datetime, timedelta
 from typing import Optional
+import pickle
 
+import redis as redis
 from fastapi import Depends, HTTPException, status
 from passlib.context import CryptContext
 from fastapi.security import OAuth2PasswordBearer
@@ -16,6 +18,7 @@ class Auth:
     SECRET_KEY = "secret_key"
     ALGORITHM = "HS256"
     oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/auth/login")
+    r = redis.Redis(host='localhost', port=6379, db=0)
 
     def verify_password(self, plain_password, hashed_password):
         return self.pwd_context.verify(plain_password, hashed_password)
@@ -76,10 +79,23 @@ class Auth:
         except JWTError as e:
             raise credentials_exception
 
-        user = await repository_users.find_user_by_email(email, db)
+        # user = await repository_users.find_user_by_email(email, db)
+        user = self.r.get(f"user:{email}")
+        if user is None:
+            user = await repository_users.find_user_by_email(email, db)
+            if user is None:
+                raise credentials_exception
+
+            # ------------------------------------------------------------------------Кешування/Доробити після відладки підтвердження пошти
+            await self.r.set(f"user:{email}", pickle.dumps(user))  # await додано за рекомендацією Pycharm
+            # оскільки є залежність між таблицями, для кешування може знадобитися id, інакше буде помилка з причини різних сесій (див. 1 частину 1:18)
+            await self.r.expire(f"user:{email}", 900)  # await додано за рекомендацією Pycharm
+        else:
+            user = pickle.loads(user)
         if user is None:
             raise credentials_exception
         return user
+        # -----------------------------------------------------------------------------
 
     async def decode_refresh_token(self, refresh_token: str):
         try:
