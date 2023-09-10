@@ -5,16 +5,17 @@ from fastapi_mail import FastMail, MessageSchema, ConnectionConfig, MessageType
 from fastapi_mail.errors import ConnectionErrors
 from pydantic import EmailStr
 
+from src.conf.config import settings
 from src.services.auth import auth_service
 
 
 # для навчання тут прописано навчальну пошту
 conf = ConnectionConfig(
-    MAIL_USERNAME="fastapi_kulyk@meta.ua",
-    MAIL_PASSWORD="pythonCourse2023",
-    MAIL_FROM="fastapi_kulyk@meta.ua",  # --------??????????????
-    MAIL_PORT=465,
-    MAIL_SERVER="smtp.meta.ua",
+    MAIL_USERNAME=settings.mail_username,
+    MAIL_PASSWORD=settings.mail_password,
+    MAIL_FROM=EmailStr(settings.mail_from),
+    MAIL_PORT=settings.mail_port,
+    MAIL_SERVER=settings.mail_server,
     MAIL_FROM_NAME="Home_work_12/13_app",
     MAIL_STARTTLS=False,
     MAIL_SSL_TLS=True,

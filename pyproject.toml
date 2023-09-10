@@ -8,18 +8,18 @@ packages = [{include = "kulyk_goit_pythonweb_hw_12"}]
 
 [tool.poetry.dependencies]
 python = "^3.10"
-fastapi = "^0.101.1"
 uvicorn = {extras = ["standard"], version = "^0.23.2"}
-sqlalchemy = "^2.0.20"
-psycopg2 = "^2.9.7"
-alembic = "^1.11.3"
-pydantic = {extras = ["email"], version = "^2.3.0"}
 python-jose = {extras = ["cryptography"], version = "^3.3.0"}
 python-multipart = "^0.0.6"
 passlib = {extras = ["bcrypt"], version = "^1.7.4"}
-fastapi-mail = "^1.4.1"
-email-validator = "^2.0.0.post2"
-redis = "^5.0.0"
+python-dotenv = "^1.0.0"
+pydantic = "1.10.7"
+fastapi = "0.95.0"
+fastapi-mail = "1.2.7"
+sqlalchemy = "2.0.7"
+redis = "4.5.4"
+alembic = "1.10.2"
+psycopg2 = "2.9.5"
 
 
 [build-system]
