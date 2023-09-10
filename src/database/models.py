@@ -33,7 +33,9 @@ class User(Base):
     updated_at = Column(
         "updated_at", DateTime, default=func.now(), onupdate=func.now()
     )  # автоматично створюватиметься
-    confirmed = Column(Boolean, default=False)  # визначає, чи був підтверджений email користувача
+    confirmed = Column(
+        Boolean, default=False
+    )  # визначає, чи був підтверджений email користувача
 
 
 class Contact(Base):

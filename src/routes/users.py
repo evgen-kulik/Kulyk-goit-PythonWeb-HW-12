@@ -1,5 +1,7 @@
 from typing import List
 
+from fastapi_limiter.depends import RateLimiter  # для обмеження кількості запитів
+
 from fastapi import APIRouter, HTTPException, Depends, status
 from sqlalchemy.orm import Session
 
@@ -12,7 +14,12 @@ from src.services.auth import auth_service
 router = APIRouter(prefix="/users", tags=["users"])
 
 
-@router.get("/", response_model=List[UserResponse])
+@router.get(
+    "/",
+    response_model=List[UserResponse],
+    description="No more than 2 requests per 5 seconds",
+    dependencies=[Depends(RateLimiter(times=2, seconds=5))],
+)
 async def get_users(
     skip: int = 0,
     limit: int = 100,
@@ -23,7 +30,12 @@ async def get_users(
     return users
 
 
-@router.get("/{user_id}", response_model=UserResponse)
+@router.get(
+    "/{user_id}",
+    response_model=UserResponse,
+    description="No more than 2 requests per 5 seconds",
+    dependencies=[Depends(RateLimiter(times=2, seconds=5))],
+)
 async def get_user(
     user_id: int,
     db: Session = Depends(get_db),
@@ -44,7 +56,12 @@ async def get_user(
 # ---------------
 
 
-@router.put("/{user_id}", response_model=UserResponse)
+@router.put(
+    "/{user_id}",
+    response_model=UserResponse,
+    description="No more than 2 requests per 5 seconds",
+    dependencies=[Depends(RateLimiter(times=2, seconds=5))],
+)
 async def update_user(
     body: UserModel,
     user_id: int,
@@ -59,7 +76,12 @@ async def update_user(
     return user
 
 
-@router.delete("/{user_id}", response_model=UserResponse)
+@router.delete(
+    "/{user_id}",
+    response_model=UserResponse,
+    description="No more than 2 requests per 5 seconds",
+    dependencies=[Depends(RateLimiter(times=2, seconds=5))],
+)
 async def remove_user(
     user_id: int,
     db: Session = Depends(get_db),
@@ -73,7 +95,12 @@ async def remove_user(
     return user
 
 
-@router.get("/user_name/", response_model=UserResponse)
+@router.get(
+    "/user_name/",
+    response_model=UserResponse,
+    description="No more than 2 requests per 5 seconds",
+    dependencies=[Depends(RateLimiter(times=2, seconds=5))],
+)
 async def find_user_by_name(
     user_name: str,
     db: Session = Depends(get_db),
@@ -88,7 +115,12 @@ async def find_user_by_name(
         return user
 
 
-@router.get("/user_last_name/", response_model=UserResponse)
+@router.get(
+    "/user_last_name/",
+    response_model=UserResponse,
+    description="No more than 2 requests per 5 seconds",
+    dependencies=[Depends(RateLimiter(times=2, seconds=5))],
+)
 async def find_user_by_last_name(
     user_last_name: str,
     db: Session = Depends(get_db),
@@ -103,7 +135,12 @@ async def find_user_by_last_name(
         return user
 
 
-@router.get("/user_email/", response_model=UserResponse)
+@router.get(
+    "/user_email/",
+    response_model=UserResponse,
+    description="No more than 2 requests per 5 seconds",
+    dependencies=[Depends(RateLimiter(times=2, seconds=5))],
+)
 async def find_user_by_email(
     user_email: str,
     db: Session = Depends(get_db),
@@ -118,7 +155,12 @@ async def find_user_by_email(
         return user
 
 
-@router.get("/next_7_days_birthdays/", response_model=List[UserResponse])
+@router.get(
+    "/next_7_days_birthdays/",
+    response_model=List[UserResponse],
+    description="No more than 2 requests per 5 seconds",
+    dependencies=[Depends(RateLimiter(times=2, seconds=5))],
+)
 async def find_next_7_days_birthdays(
     db: Session = Depends(get_db),
     current_user: User = Depends(auth_service.get_current_user),

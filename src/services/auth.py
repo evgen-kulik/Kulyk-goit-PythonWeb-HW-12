@@ -1,5 +1,6 @@
 from datetime import datetime, timedelta
 from typing import Optional
+
 # import pickle
 
 # import redis as redis
@@ -120,7 +121,9 @@ class Auth:
     def create_email_token(self, data: dict):  # для верифікації
         to_encode = data.copy()
         expire = datetime.utcnow() + timedelta(days=7)
-        to_encode.update({"iat": datetime.utcnow(), "exp": expire, "scope": "email_token"})
+        to_encode.update(
+            {"iat": datetime.utcnow(), "exp": expire, "scope": "email_token"}
+        )
         token = jwt.encode(to_encode, self.SECRET_KEY, algorithm=self.ALGORITHM)
         return token
 
@@ -137,8 +140,10 @@ class Auth:
 
         except JWTError as e:
             print(e)
-            raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-                                detail="Invalid token for email verification")
+            raise HTTPException(
+                status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                detail="Invalid token for email verification",
+            )
 
 
 auth_service = Auth()

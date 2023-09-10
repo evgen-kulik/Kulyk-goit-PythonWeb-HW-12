@@ -1,4 +1,12 @@
-from fastapi import Depends, HTTPException, status, APIRouter, Security, BackgroundTasks, Request
+from fastapi import (
+    Depends,
+    HTTPException,
+    status,
+    APIRouter,
+    Security,
+    BackgroundTasks,
+    Request,
+)
 from fastapi.security import (
     HTTPAuthorizationCredentials,
     HTTPBearer,
@@ -19,7 +27,12 @@ security = HTTPBearer()
 @router.post(
     "/signup", response_model=UserResponse, status_code=status.HTTP_201_CREATED
 )
-async def signup(body: UserModel, background_tasks: BackgroundTasks, request: Request, db: Session = Depends(get_db)):
+async def signup(
+    body: UserModel,
+    background_tasks: BackgroundTasks,
+    request: Request,
+    db: Session = Depends(get_db),
+):
     exist_user = await repository_users.find_user_by_email(body.email, db)
     if exist_user:
         raise HTTPException(
@@ -27,8 +40,13 @@ async def signup(body: UserModel, background_tasks: BackgroundTasks, request: Re
         )
     body.password = auth_service.get_password_hash(body.password)
     new_user = await repository_users.create_user(body, db)
-    background_tasks.add_task(send_email, new_user.email, new_user.name, str(request.base_url))
-    return {"user": new_user, "detail": "User successfully created. Check your email for confirmation."}
+    background_tasks.add_task(
+        send_email, new_user.email, new_user.name, str(request.base_url)
+    )
+    return {
+        "user": new_user,
+        "detail": "User successfully created. Check your email for confirmation.",
+    }
 
 
 @router.post("/login", response_model=TokenModel)
@@ -85,24 +103,32 @@ async def refresh_token(
     }
 
 
-@router.get('/confirmed_email/{token}')
+@router.get("/confirmed_email/{token}")
 async def confirmed_email(token: str, db: Session = Depends(get_db)):
     email = await auth_service.get_email_from_token(token)
     user = await repository_users.find_user_by_email(email, db)
     if user is None:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Verification error")
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, detail="Verification error"
+        )
     if user.confirmed:
         return {"message": "Your email is already confirmed"}
     await repository_users.confirmed_email(email, db)
     return {"message": "Email confirmed"}
 
 
-@router.post('/request_email')
-async def request_email(body: RequestEmail, background_tasks: BackgroundTasks, request: Request,
-                        db: Session = Depends(get_db)):
+@router.post("/request_email")
+async def request_email(
+    body: RequestEmail,
+    background_tasks: BackgroundTasks,
+    request: Request,
+    db: Session = Depends(get_db),
+):
     user = await repository_users.find_user_by_email(body.email, db)
     if user:
         if user.confirmed:
             return {"message": "Your email is already confirmed"}
-        background_tasks.add_task(send_email, user.email, user.name, str(request.base_url))
+        background_tasks.add_task(
+            send_email, user.email, user.name, str(request.base_url)
+        )
     return {"message": "Check your email for confirmation."}
