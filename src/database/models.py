@@ -27,6 +27,7 @@ class User(Base):
     email = Column(String, nullable=False, unique=True, index=True)
     password = Column(String(350), nullable=False)
     description = Column(String(250), nullable=True)
+    avatar = Column(String(255), nullable=True)
     created_at = Column(
         "created_at", DateTime, default=func.now()
     )  # автоматично створюватиметься

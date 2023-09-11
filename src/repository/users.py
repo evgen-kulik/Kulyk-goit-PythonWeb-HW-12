@@ -1,3 +1,4 @@
+from libgravatar import Gravatar
 from typing import Type
 from datetime import date, timedelta
 
@@ -88,6 +89,12 @@ async def find_next_7_days_birthdays(db: Session) -> list[Type[User]] | None:
 # -------------------Авторизаційні функції-----------------
 async def create_user(body: UserModel, db: Session) -> User:
     contacts = db.query(Contact).filter(Contact.id.in_(body.contacts)).all()
+    avatar = None  # надамо автоматичну аватарку користувачу через Gravatar
+    try:
+        g = Gravatar(body.email)
+        avatar = g.get_image()
+    except Exception as e:
+        print(e)
     new_user = User(
         name=body.name,
         last_name=body.last_name,
@@ -96,6 +103,7 @@ async def create_user(body: UserModel, db: Session) -> User:
         description=body.description,
         password=body.password,
         contacts=contacts,
+        avatar=avatar
     )
     db.add(new_user)
     db.commit()
@@ -106,6 +114,13 @@ async def create_user(body: UserModel, db: Session) -> User:
 async def update_token(user: User, refresh_token, db: Session):
     user.refresh_token = refresh_token
     db.commit()
+
+
+async def update_avatar(email, url: str, db: Session) -> User:
+    user = await find_user_by_email(email, db)
+    user.avatar = url
+    db.commit()
+    return user
 
 
 # ---------Верифікація-----------
