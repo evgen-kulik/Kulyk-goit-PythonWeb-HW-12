@@ -25,7 +25,7 @@ conf = ConnectionConfig(
 )
 
 
-async def send_email(email: EmailStr, username: str, host: str):
+async def send_email(email: EmailStr, name: str, host: str):
     try:
         token_verification = auth_service.create_email_token({"sub": email})
         message = MessageSchema(
@@ -33,7 +33,7 @@ async def send_email(email: EmailStr, username: str, host: str):
             recipients=[email],  # список пошт, куди надсилається лист
             template_body={
                 "host": host,
-                "username": username,
+                "username": name,
                 "token": token_verification,
             },
             subtype=MessageType.html,

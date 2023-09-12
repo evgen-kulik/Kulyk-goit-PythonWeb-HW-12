@@ -27,7 +27,7 @@ class UserModel(UserBase):
     contacts: List[int]
 
 
-class UserResponse(UserBase):
+class UserResponseGet(UserBase):
     id: int
     name: str
     last_name: str
@@ -38,6 +38,22 @@ class UserResponse(UserBase):
 
     class Config:
         orm_mode = True
+
+
+class UserDb(BaseModel):
+    id: int
+    name: str
+    email: str
+    created_at: datetime
+    avatar: str
+
+    class Config:
+        orm_mode = True
+
+
+class UserResponse(BaseModel):
+    user: UserDb
+    detail: str = "User successfully created"
 
 
 class TokenModel(BaseModel):

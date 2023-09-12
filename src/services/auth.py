@@ -137,7 +137,6 @@ class Auth:
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Invalid scope for token",
             )
-
         except JWTError as e:
             print(e)
             raise HTTPException(

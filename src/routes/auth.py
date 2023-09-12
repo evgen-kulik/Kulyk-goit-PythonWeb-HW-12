@@ -15,7 +15,7 @@ from fastapi.security import (
 from sqlalchemy.orm import Session
 
 from src.database.db import get_db
-from src.schemas import UserModel, UserResponse, TokenModel, RequestEmail
+from src.schemas import UserModel, TokenModel, RequestEmail, UserResponse
 from src.repository import users as repository_users
 from src.services.auth import auth_service
 from src.services.email import send_email
@@ -26,7 +26,7 @@ security = HTTPBearer()
 
 @router.post(
     "/signup", response_model=UserResponse, status_code=status.HTTP_201_CREATED
-)
+)  # response_model=UserResponse відкориговано (раніше викидало 500 помилку)
 async def signup(
     body: UserModel,
     background_tasks: BackgroundTasks,
@@ -105,7 +105,7 @@ async def refresh_token(
 
 @router.get("/confirmed_email/{token}")
 async def confirmed_email(token: str, db: Session = Depends(get_db)):
-    email = await auth_service.get_email_from_token(token)
+    email = auth_service.get_email_from_token(token)
     user = await repository_users.find_user_by_email(email, db)
     if user is None:
         raise HTTPException(

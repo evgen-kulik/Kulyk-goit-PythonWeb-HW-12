@@ -9,7 +9,7 @@ import cloudinary.uploader
 
 from src.database.db import get_db
 from src.database.models import User
-from src.schemas import UserModel, UserResponse
+from src.schemas import UserModel, UserResponse, UserResponseGet
 from src.repository import users as repository_users
 from src.services.auth import auth_service
 from src.conf.config import settings
@@ -19,7 +19,7 @@ router = APIRouter(prefix="/users", tags=["users"])
 
 @router.get(
     "/",
-    response_model=List[UserResponse],
+    response_model=List[UserResponseGet],
     description="No more than 2 requests per 5 seconds",
     dependencies=[Depends(RateLimiter(times=2, seconds=5))],
 )
@@ -35,7 +35,7 @@ async def get_users(
 
 @router.get(
     "/{user_id}",
-    response_model=UserResponse,
+    response_model=UserResponseGet,
     description="No more than 2 requests per 5 seconds",
     dependencies=[Depends(RateLimiter(times=2, seconds=5))],
 )
@@ -61,7 +61,7 @@ async def get_user(
 
 @router.put(
     "/{user_id}",
-    response_model=UserResponse,
+    response_model=UserResponseGet,
     description="No more than 2 requests per 5 seconds",
     dependencies=[Depends(RateLimiter(times=2, seconds=5))],
 )
@@ -81,7 +81,7 @@ async def update_user(
 
 @router.delete(
     "/{user_id}",
-    response_model=UserResponse,
+    response_model=UserResponseGet,
     description="No more than 2 requests per 5 seconds",
     dependencies=[Depends(RateLimiter(times=2, seconds=5))],
 )
@@ -100,7 +100,7 @@ async def remove_user(
 
 @router.get(
     "/user_name/",
-    response_model=UserResponse,
+    response_model=UserResponseGet,
     description="No more than 2 requests per 5 seconds",
     dependencies=[Depends(RateLimiter(times=2, seconds=5))],
 )
@@ -120,7 +120,7 @@ async def find_user_by_name(
 
 @router.get(
     "/user_last_name/",
-    response_model=UserResponse,
+    response_model=UserResponseGet,
     description="No more than 2 requests per 5 seconds",
     dependencies=[Depends(RateLimiter(times=2, seconds=5))],
 )
@@ -140,7 +140,7 @@ async def find_user_by_last_name(
 
 @router.get(
     "/user_email/",
-    response_model=UserResponse,
+    response_model=UserResponseGet,
     description="No more than 2 requests per 5 seconds",
     dependencies=[Depends(RateLimiter(times=2, seconds=5))],
 )
@@ -160,7 +160,7 @@ async def find_user_by_email(
 
 @router.get(
     "/next_7_days_birthdays/",
-    response_model=List[UserResponse],
+    response_model=List[UserResponseGet],
     description="No more than 2 requests per 5 seconds",
     dependencies=[Depends(RateLimiter(times=2, seconds=5))],
 )
@@ -177,12 +177,12 @@ async def find_next_7_days_birthdays(
 
 
 # --------------------оновлення аватара користувача
-@router.get("/me/", response_model=UserResponse)
+@router.get("/me/", response_model=UserResponseGet)
 async def read_users_me(current_user: User = Depends(auth_service.get_current_user)):
     return current_user
 
 
-@router.patch('/avatar', response_model=UserResponse)
+@router.patch('/avatar', response_model=UserResponseGet)
 async def update_avatar_user(file: UploadFile = File(), current_user: User = Depends(auth_service.get_current_user),
                              db: Session = Depends(get_db)):
     cloudinary.config(
@@ -191,7 +191,7 @@ async def update_avatar_user(file: UploadFile = File(), current_user: User = Dep
         api_secret=settings.cloudinary_api_secret,
         secure=True
     )
-    public_id = f'web13/{current_user.username}'
+    public_id = f'web13/{current_user.name}'
     r = cloudinary.uploader.upload(file.file, public_id=public_id, overwrite=True)
     src_url = cloudinary.CloudinaryImage(public_id) \
         .build_url(width=250, height=250, crop='fill', version=r.get('version'))
