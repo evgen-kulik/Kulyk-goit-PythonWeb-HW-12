@@ -14,7 +14,6 @@ from src.repository.contacts import (
 
 
 class TestUsers(unittest.IsolatedAsyncioTestCase):
-
     def setUp(self):
         self.session = MagicMock(spec=Session)
         self.user = User(id=1)
@@ -37,24 +36,30 @@ class TestUsers(unittest.IsolatedAsyncioTestCase):
         self.assertIsNone(result)
 
     async def test_create_contact(self):
-        body = ContactModel(phone_number='0632428185')
+        body = ContactModel(phone_number="0632428185")
         result = await create_contact(body=body, db=self.session)
         self.assertEqual(result.phone_number, body.phone_number)
-        self.assertTrue(hasattr(result, "id"))  # перевірка на унікальність "id" при створенні
+        self.assertTrue(
+            hasattr(result, "id")
+        )  # перевірка на унікальність "id" при створенні
 
     async def test_update_contact_found(self):
-        body = ContactModel(phone_number='0632428185')
+        body = ContactModel(phone_number="0632428185")
         contact = Contact(phone_number=body.phone_number)
         self.session.query().filter().first.return_value = contact
         self.session.commit.return_value = None
-        result = await update_contact(contact_id=1, body=body, user=self.user, db=self.session)
+        result = await update_contact(
+            contact_id=1, body=body, user=self.user, db=self.session
+        )
         self.assertEqual(result, contact)
 
     async def test_update_contact_not_found(self):
-        body = ContactModel(phone_number='0632428185')
+        body = ContactModel(phone_number="0632428185")
         self.session.query().filter().first.return_value = None
         self.session.commit.return_value = None
-        result = await update_contact(contact_id=1, body=body, user=self.user, db=self.session)
+        result = await update_contact(
+            contact_id=1, body=body, user=self.user, db=self.session
+        )
         self.assertIsNone(result)
 
     async def test_remove_contact_found(self):
@@ -69,5 +74,5 @@ class TestUsers(unittest.IsolatedAsyncioTestCase):
         self.assertIsNone(result)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

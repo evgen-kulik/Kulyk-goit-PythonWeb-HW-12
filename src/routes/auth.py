@@ -26,7 +26,7 @@ security = HTTPBearer()
 
 @router.post(
     "/signup", response_model=UserResponse, status_code=status.HTTP_201_CREATED
-)  # response_model=UserResponse відкориговано (раніше викидало 500 помилку)
+)
 async def signup(
     body: UserModel,
     background_tasks: BackgroundTasks,
@@ -137,18 +137,18 @@ async def refresh_token(
 @router.get("/confirmed_email/{token}")
 async def confirmed_email(token: str, db: Session = Depends(get_db)):
     """
-     The confirmed_email function is used to confirm a user's email address.
-     It takes the token from the URL and uses it to get the user's email address.
-     The function then checks if there is a user with that email in our database,
-     and if not, returns an error message. If there is such a user, we check whether
-     their account has already been confirmed or not; if it has been confirmed already,
-     we return an appropriate message; otherwise we update their account status in our database.
+    The confirmed_email function is used to confirm a user's email address.
+    It takes the token from the URL and uses it to get the user's email address.
+    The function then checks if there is a user with that email in our database,
+    and if not, returns an error message. If there is such a user, we check whether
+    their account has already been confirmed or not; if it has been confirmed already,
+    we return an appropriate message; otherwise we update their account status in our database.
 
-     :param token: str: Get the token from the url
-     :param db: Session: Access the database
-     :return: A message that the email has been confirmed
-     :doc-author: Trelent
-     """
+    :param token: str: Get the token from the url
+    :param db: Session: Access the database
+    :return: A message that the email has been confirmed
+    :doc-author: Trelent
+    """
 
     email = auth_service.get_email_from_token(token)
     user = await repository_users.find_user_by_email(email, db)
@@ -191,4 +191,4 @@ async def request_email(
         background_tasks.add_task(
             send_email, user.email, user.name, str(request.base_url)
         )
-    return {"message": "Check your email for confirmation."}
+    return {"message": "Check your email for confirmation"}

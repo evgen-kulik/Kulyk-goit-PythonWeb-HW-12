@@ -197,7 +197,7 @@ async def create_user(body: UserModel, db: Session) -> User:
         description=body.description,
         password=body.password,
         contacts=contacts,
-        avatar=avatar
+        avatar=avatar,
     )
     db.add(new_user)
     db.commit()

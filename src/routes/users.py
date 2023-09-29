@@ -24,10 +24,10 @@ router = APIRouter(prefix="/users", tags=["users"])
     dependencies=[Depends(RateLimiter(times=2, seconds=5))],
 )
 async def get_users(
-        skip: int = 0,
-        limit: int = 100,
-        db: Session = Depends(get_db),
-        current_user: User = Depends(auth_service.get_current_user),
+    skip: int = 0,
+    limit: int = 100,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(auth_service.get_current_user),
 ):
     """
     The get_users function returns a list of users.
@@ -52,9 +52,9 @@ async def get_users(
     dependencies=[Depends(RateLimiter(times=2, seconds=5))],
 )
 async def get_user(
-        user_id: int,
-        db: Session = Depends(get_db),
-        current_user: User = Depends(auth_service.get_current_user),
+    user_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(auth_service.get_current_user),
 ):
     """
     The get_user function is a GET endpoint that returns the user with the given ID.
@@ -90,10 +90,10 @@ async def get_user(
     dependencies=[Depends(RateLimiter(times=2, seconds=5))],
 )
 async def update_user(
-        body: UserModel,
-        user_id: int,
-        db: Session = Depends(get_db),
-        current_user: User = Depends(auth_service.get_current_user),
+    body: UserModel,
+    user_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(auth_service.get_current_user),
 ):
     """
     The update_user function updates a user in the database.
@@ -124,9 +124,9 @@ async def update_user(
     dependencies=[Depends(RateLimiter(times=2, seconds=5))],
 )
 async def remove_user(
-        user_id: int,
-        db: Session = Depends(get_db),
-        current_user: User = Depends(auth_service.get_current_user),
+    user_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(auth_service.get_current_user),
 ):
     """
     The remove_user function removes a user from the database.
@@ -154,9 +154,9 @@ async def remove_user(
     dependencies=[Depends(RateLimiter(times=2, seconds=5))],
 )
 async def find_user_by_name(
-        user_name: str,
-        db: Session = Depends(get_db),
-        current_user: User = Depends(auth_service.get_current_user),
+    user_name: str,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(auth_service.get_current_user),
 ):
     """
     The find_user_by_name function is a GET request that returns the user with the given name.
@@ -186,9 +186,9 @@ async def find_user_by_name(
     dependencies=[Depends(RateLimiter(times=2, seconds=5))],
 )
 async def find_user_by_last_name(
-        user_last_name: str,
-        db: Session = Depends(get_db),
-        current_user: User = Depends(auth_service.get_current_user),
+    user_last_name: str,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(auth_service.get_current_user),
 ):
     """
     The find_user_by_last_name function is a GET request that returns the user with the specified last name.
@@ -218,9 +218,9 @@ async def find_user_by_last_name(
     dependencies=[Depends(RateLimiter(times=2, seconds=5))],
 )
 async def find_user_by_email(
-        user_email: str,
-        db: Session = Depends(get_db),
-        current_user: User = Depends(auth_service.get_current_user),
+    user_email: str,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(auth_service.get_current_user),
 ):
     """
     The find_user_by_email function is a GET request that takes in an email address and returns the user associated with it.
@@ -250,8 +250,8 @@ async def find_user_by_email(
     dependencies=[Depends(RateLimiter(times=2, seconds=5))],
 )
 async def find_next_7_days_birthdays(
-        db: Session = Depends(get_db),
-        current_user: User = Depends(auth_service.get_current_user),
+    db: Session = Depends(get_db),
+    current_user: User = Depends(auth_service.get_current_user),
 ):
     """
     The find_next_7_days_birthdays function returns a list of users who have birthdays in the next 7 days.
@@ -287,9 +287,12 @@ async def read_users_me(current_user: User = Depends(auth_service.get_current_us
     return current_user
 
 
-@router.patch('/avatar', response_model=UserResponseGet)
-async def update_avatar_user(file: UploadFile = File(), current_user: User = Depends(auth_service.get_current_user),
-                             db: Session = Depends(get_db)):
+@router.patch("/avatar", response_model=UserResponseGet)
+async def update_avatar_user(
+    file: UploadFile = File(),
+    current_user: User = Depends(auth_service.get_current_user),
+    db: Session = Depends(get_db),
+):
     """
     The update_avatar_user function updates the avatar of a user. Args: file (UploadFile): The image to be uploaded.
     current_user (User): The user whose avatar is being updated. This is passed in by the auth_service dependency,
@@ -306,14 +309,14 @@ async def update_avatar_user(file: UploadFile = File(), current_user: User = Dep
 
     cloudinary.config(
         cloud_name=settings.cloudinary_name,
-        api_key=settings
-        .cloudinary_api_key,
+        api_key=settings.cloudinary_api_key,
         api_secret=settings.cloudinary_api_secret,
-        secure=True
+        secure=True,
     )
-    public_id = f'web13/{current_user.name}'
+    public_id = f"web13/{current_user.name}"
     r = cloudinary.uploader.upload(file.file, public_id=public_id, overwrite=True)
-    src_url = cloudinary.CloudinaryImage(public_id) \
-        .build_url(width=250, height=250, crop='fill', version=r.get('version'))
+    src_url = cloudinary.CloudinaryImage(public_id).build_url(
+        width=250, height=250, crop="fill", version=r.get("version")
+    )
     user = await repository_users.update_avatar(current_user.email, src_url, db)
     return user

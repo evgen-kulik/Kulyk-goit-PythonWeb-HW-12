@@ -197,16 +197,16 @@ class Auth:
 
     def get_email_from_token(self, token: str):
         """
-       The get_email_from_token function takes a token as an argument and returns the email address associated with that token.
-       It does this by decoding the JWT using our SECRET_KEY and ALGORITHM, then checking to make sure that it has a scope of &quot;email_token&quot;.
-       If so, it returns the email address from the sub field in its payload. If not, or if there is any other error during decoding (such as an invalid signature),
-       it raises an HTTPException.
+        The get_email_from_token function takes a token as an argument and returns the email address associated with that token.
+        It does this by decoding the JWT using our SECRET_KEY and ALGORITHM, then checking to make sure that it has a scope of &quot;email_token&quot;.
+        If so, it returns the email address from the sub field in its payload. If not, or if there is any other error during decoding (such as an invalid signature),
+        it raises an HTTPException.
 
-       :param self: Represent the instance of the class
-       :param token: str: Pass in the token that is sent to the user's email
-       :return: The email that was encoded in the token
-       :doc-author: Trelent
-       """
+        :param self: Represent the instance of the class
+        :param token: str: Pass in the token that is sent to the user's email
+        :return: The email that was encoded in the token
+        :doc-author: Trelent
+        """
 
         try:
             payload = jwt.decode(token, self.SECRET_KEY, algorithms=[self.ALGORITHM])

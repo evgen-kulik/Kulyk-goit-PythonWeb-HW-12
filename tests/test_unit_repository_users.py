@@ -30,19 +30,27 @@ from src.repository.users import (
 
 
 class TestUsers(unittest.IsolatedAsyncioTestCase):
-
     def setUp(self):
         self.session = MagicMock(spec=Session)
         self.user = User(id=1)
-        self.refresh_token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9' \
-                             '.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ' \
-                             '.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c'  # example of refresh_token
+        self.refresh_token = (
+            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9"
+            ".eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ"
+            ".SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
+        )  # example of refresh_token
         self.url = "https://test_url.com"
         self.email = "example@gmail.com"
 
     async def test_create_user(self):
-        body = UserModel(name="test", last_name="test", day_of_born="2023-09-02", email="exemple@gmail.com",
-                         description="test description", password="testPassword", contacts=[1, 2])
+        body = UserModel(
+            name="test",
+            last_name="test",
+            day_of_born="2023-09-02",
+            email="exemple@gmail.com",
+            description="test description",
+            password="testPassword",
+            contacts=[1, 2],
+        )
         contacts = [Contact(id=1), Contact(id=2)]
         self.session.query().filter().all.return_value = contacts
         result = await create_user(body=body, db=self.session)
@@ -53,7 +61,9 @@ class TestUsers(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(result.description, body.description)
         self.assertEqual(result.password, body.password)
         self.assertEqual(result.contacts, contacts)
-        self.assertTrue(hasattr(result, "id"))  # перевірка на унікальність "id" при створенні
+        self.assertTrue(
+            hasattr(result, "id")
+        )  # перевірка на унікальність "id" при створенні
 
     async def test_get_users(self):
         users = [User(), User(), User()]
@@ -82,21 +92,39 @@ class TestUsers(unittest.IsolatedAsyncioTestCase):
         self.assertIsNone(result)
 
     async def test_update_user_found(self):
-        body = UserModel(name="test", last_name="test", day_of_born="2023-09-02", email="exemple@gmail.com",
-                         description="test description", password="testPassword", contacts=[1, 2])
+        body = UserModel(
+            name="test",
+            last_name="test",
+            day_of_born="2023-09-02",
+            email="exemple@gmail.com",
+            description="test description",
+            password="testPassword",
+            contacts=[1, 2],
+        )
         contacts = [Contact(id=1), Contact(id=2)]
         user = User(contacts=contacts)
         self.session.query().filter().first.return_value = user
         self.session.commit.return_value = None
-        result = await update_user(user_id=1, body=body, user=self.user, db=self.session)
+        result = await update_user(
+            user_id=1, body=body, user=self.user, db=self.session
+        )
         self.assertEqual(result, user)
 
     async def test_update_user_not_found(self):
-        body = UserModel(name="test", last_name="test", day_of_born="2023-09-02", email="exemple@gmail.com",
-                         description="test description", password="testPassword", contacts=[1, 2])
+        body = UserModel(
+            name="test",
+            last_name="test",
+            day_of_born="2023-09-02",
+            email="exemple@gmail.com",
+            description="test description",
+            password="testPassword",
+            contacts=[1, 2],
+        )
         self.session.query().filter().first.return_value = None
         self.session.commit.return_value = None
-        result = await update_user(user_id=1, body=body, user=self.user, db=self.session)
+        result = await update_user(
+            user_id=1, body=body, user=self.user, db=self.session
+        )
         self.assertIsNone(result)
 
     async def test_find_user_by_name_found(self):
@@ -111,12 +139,16 @@ class TestUsers(unittest.IsolatedAsyncioTestCase):
 
     async def test_find_user_by_last_name_found(self):
         self.session.query().filter().first.return_value = self.user
-        result = await find_user_by_last_name(user_last_name="test_last_name", db=self.session)
+        result = await find_user_by_last_name(
+            user_last_name="test_last_name", db=self.session
+        )
         self.assertEqual(result, self.user)
 
     async def test_find_user_by_last_name_not_found(self):
         self.session.query().filter().first.return_value = None
-        result = await find_user_by_last_name(user_last_name="test_last_name", db=self.session)
+        result = await find_user_by_last_name(
+            user_last_name="test_last_name", db=self.session
+        )
         self.assertIsNone(result)
 
     async def test_find_user_by_email_found(self):
@@ -141,7 +173,9 @@ class TestUsers(unittest.IsolatedAsyncioTestCase):
         self.assertIsNone(result)
 
     async def test_update_token(self):
-        await update_token(user=self.user, refresh_token=self.refresh_token, db=self.session)
+        await update_token(
+            user=self.user, refresh_token=self.refresh_token, db=self.session
+        )
         self.assertEqual(self.user.refresh_token, self.refresh_token)
 
     async def test_update_avatar(self):
@@ -155,5 +189,5 @@ class TestUsers(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(user.confirmed, True)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

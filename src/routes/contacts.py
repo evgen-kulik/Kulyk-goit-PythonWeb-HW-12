@@ -105,19 +105,19 @@ async def update_contact(
     current_user: User = Depends(auth_service.get_current_user),
 ):
     """
-   The update_contact function updates a contact in the database.
+    The update_contact function updates a contact in the database.
 
-   :param body: ContactModel: Pass the contact model to the function
-   :param contact_id: int: Identify the contact to be updated
-   :param db: Session: Pass in the database session
-   :param current_user: User: Get the current user from the database
-   :param : Get the contact id from the url
-   :return: The updated contact
-   :doc-author: Trelent
-   """
+    :param body: ContactModel: Pass the contact model to the function
+    :param contact_id: int: Identify the contact to be updated
+    :param db: Session: Pass in the database session
+    :param current_user: User: Get the current user from the database
+    :param : Get the contact id from the url
+    :return: The updated contact
+    :doc-author: Trelent
+    """
 
     contact = await repository_contacts.update_contact(
-       contact_id, body, db, current_user
+        contact_id, body, db, current_user
     )
     if contact is None:
         raise HTTPException(

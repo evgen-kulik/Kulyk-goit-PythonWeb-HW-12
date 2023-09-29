@@ -73,10 +73,10 @@ async def update_contact(
     """
 
     contact = (
-            db.query(Contact)
-            .filter(and_(Contact.id == contact_id, Contact.user_id == user.id))
-            .first()
-        )
+        db.query(Contact)
+        .filter(and_(Contact.id == contact_id, Contact.user_id == user.id))
+        .first()
+    )
     if contact:
         contact.phone_number = body.phone_number
         db.commit()
@@ -100,10 +100,10 @@ async def remove_contact(contact_id: int, db: Session, user: User) -> Contact | 
     """
 
     contact = (
-            db.query(Contact)
-            .filter(and_(Contact.id == contact_id, Contact.user_id == user.id))
-            .first()
-        )
+        db.query(Contact)
+        .filter(and_(Contact.id == contact_id, Contact.user_id == user.id))
+        .first()
+    )
     if contact:
         db.delete(contact)
         db.commit()
